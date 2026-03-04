@@ -22,6 +22,25 @@ resource "google_storage_bucket_iam_member" "cloudrun_reader" {
   member = "serviceAccount:${google_service_account.cloudrun.email}"
 }
 
+# Provision the IAP-managed service account for this project.
+# IAP uses this SA to invoke Cloud Run on behalf of authenticated users.
+resource "google_project_service_identity" "iap" {
+  provider = google-beta
+  project  = var.project_id
+  service  = "iap.googleapis.com"
+
+  depends_on = [google_project_service.apis]
+}
+
+# Allow the IAP SA to invoke the Cloud Run proxy
+resource "google_cloud_run_v2_service_iam_member" "iap_invoker" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.proxy.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_project_service_identity.iap.email}"
+}
+
 # Cloud Run proxy service
 resource "google_cloud_run_v2_service" "proxy" {
   name     = "tracking-docs-proxy"
