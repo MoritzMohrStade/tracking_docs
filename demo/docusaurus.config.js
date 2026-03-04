@@ -114,7 +114,7 @@ const config = {
             items: [
               {
                 label: 'Example event',
-                to: '/event-reference/complex-event',
+                to: '/event-reference/pagetrack',
               },
               {
                 label: 'GTM Data Layer Documentation',
