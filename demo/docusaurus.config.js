@@ -53,7 +53,7 @@ const config = {
         docs: {
           sidebarPath: './sidebars.js',
           routeBasePath: '/',
-          lastVersion: 'current',
+          ...(isProduction ? {} : { lastVersion: 'current' }),
           includeCurrentVersion: !isProduction,
           versions: {
             ...(!isProduction && {
